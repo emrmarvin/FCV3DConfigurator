@@ -1,0 +1,85 @@
+{
+    "items": [
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "Easy-E_NPS 4_CL150 RF_Ext 1_60i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/Easy-E_NPS%204_CL150%20RF_Ext%201_60i.step",
+            "sha1": "288817704f7ed2a2f868dc8d8ec857a38a8c428d",
+            "size": 40694350,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/Easy-E_NPS%204_CL150%20RF_Ext%201_60i.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "NPS 1_BWE_Plain_30i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/NPS%201_BWE_Plain_30i.step",
+            "sha1": "07eba6793bd237ab577cb20441a9915786a356fa",
+            "size": 12081136,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/NPS%201_BWE_Plain_30i.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "Easy-E_NPS 8_CL150 RF_Ext 1_60i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/Easy-E_NPS%208_CL150%20RF_Ext%201_60i.step",
+            "sha1": "3380600555b883a53b4c3bd0bfcd80fbe3de77f9",
+            "size": 43215200,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/Easy-E_NPS%208_CL150%20RF_Ext%201_60i.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "Easy-E_NPS 1_CL150 RF_Plain_30i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/Easy-E_NPS%201_CL150%20RF_Plain_30i.step",
+            "sha1": "9c759749251c88dc7bbd9f385a92615a5915c74b",
+            "size": 14126542,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/Easy-E_NPS%201_CL150%20RF_Plain_30i.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "38W 0400 F16P300100_Close.STEP",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/38W%200400%20F16P300100_Close.STEP",
+            "sha1": "932717544cfb4d7e0eaeccd18d819b365fe43435",
+            "size": 22333994,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/38W%200400%20F16P300100_Close.STEP"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "NPS 1_CL150 RTJ_Plain_30i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/NPS%201_CL150%20RTJ_Plain_30i.step",
+            "sha1": "ff0002c5a7b4192140f1c50ebb991073b9e4e222",
+            "size": 12679868,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/NPS%201_CL150%20RTJ_Plain_30i.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "Easy-E_NPS 3_PN25-40_Plain_70i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/Easy-E_NPS%203_PN25-40_Plain_70i.step",
+            "sha1": "015d609511630d3589c248051cb1d6c33e1163db",
+            "size": 20856612,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/Easy-E_NPS%203_PN25-40_Plain_70i.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "NPS 1_PN63-100_Ext 1_45i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/NPS%201_PN63-100_Ext%201_45i.step",
+            "sha1": "d5ad5ded8732a63f8c8dc05c17cccf31d1c7afef",
+            "size": 29462264,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/NPS%201_PN63-100_Ext%201_45i.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "Easy-E_NPS 3_PN100_Ext 1_70i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/Easy-E_NPS%203_PN100_Ext%201_70i.step",
+            "sha1": "7e9c48cde3d04c85c974d4d066580b7d0cbeaaf5",
+            "size": 21351368,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/Easy-E_NPS%203_PN100_Ext%201_70i.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing_emerson",
+            "objectKey": "Easy-E_NPS 8_PN40_Ext 1_50i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing_emerson/Easy-E_NPS%208_PN40_Ext%201_50i.step",
+            "sha1": "8f761d6d1c73fb1d3d0c61016e8ca55c2eda32e0",
+            "size": 42093874,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects/Easy-E_NPS%208_PN40_Ext%201_50i.step"
+        }
+    ],
+    "next": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing_emerson/objects?startAt=92%7C"
+}

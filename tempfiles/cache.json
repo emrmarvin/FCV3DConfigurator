@@ -1,0 +1,28 @@
+{
+    "items": [
+        {
+            "bucketKey": "daniel_viewer_testing",
+            "objectKey": "GX_DN15_PN10-40_RF_Standard_225.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing/GX_DN15_PN10-40_RF_Standard_225.step",
+            "sha1": "62355860ff4a6924e3190b3abc4c5718f27fa9b4",
+            "size": 47748206,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing/objects/GX_DN15_PN10-40_RF_Standard_225.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing",
+            "objectKey": "Easy-E_NPS 1_CL150 RF_Plain_30i.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing/Easy-E_NPS%201_CL150%20RF_Plain_30i.step",
+            "sha1": "9c759749251c88dc7bbd9f385a92615a5915c74b",
+            "size": 14126542,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing/objects/Easy-E_NPS%201_CL150%20RF_Plain_30i.step"
+        },
+        {
+            "bucketKey": "daniel_viewer_testing",
+            "objectKey": "V-ball_NPS1_CL150_RF_SIZE1.step",
+            "objectId": "urn:adsk.objects:os.object:daniel_viewer_testing/V-ball_NPS1_CL150_RF_SIZE1.step",
+            "sha1": "0c1c6b9021b889d8f1a9e461d1761e66a381d4e0",
+            "size": 7098491,
+            "location": "https://developer.api.autodesk.com/oss/v2/buckets/daniel_viewer_testing/objects/V-ball_NPS1_CL150_RF_SIZE1.step"
+        }
+    ]
+}
