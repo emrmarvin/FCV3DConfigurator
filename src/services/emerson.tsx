@@ -42,7 +42,6 @@ export const downloadFile = async (props : {url : string,filename:string,filekey
     let cached_filenames = getCache();
     let returndata : returndata_type ={msg:"",urn:"",location:"",objectKey:""};
     if(cached_filenames[props.filename] != undefined){
-        let file = fs.readFileSync('./tempfiles/'+props.filename);
         returndata = {msg:"cached",urn:cached_filenames[props.filename].urn,location:cached_filenames[props.filename].location,objectKey:cached_filenames[props.filename].objectKey}
         return returndata
     }
