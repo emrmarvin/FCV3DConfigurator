@@ -55,6 +55,7 @@ const Configtable: React.FC = () => {
   const [filedata,setFiledata] = useState<{msg : null | string,urn:null | string,location:null | string}>();
   const [urncount,setUrncount] = useState(0);
   const [token,setToken] = useState("");
+  const [confirmStatus,setConfirmstatus] = useState(false);
   const [product,setProduct] = useState("Easy-E");
 
   useEffect(()=>{
@@ -121,6 +122,8 @@ const Configtable: React.FC = () => {
           break;
           case "Name" : headerindex.Key = i;
           break;
+          case "Flange" : headerindex.Flange = i;
+          break;
         }
       })
       setHeaderindex(newheaderindex);
@@ -132,6 +135,7 @@ const Configtable: React.FC = () => {
       if(!filters.bonnet.includes(row[headerindex.Bonnet]) && filters.bonnet.length != 0){ continue; }
       if(!filters.yokeboss.includes(row[headerindex.Yokeboss]) && filters.yokeboss.length != 0){ continue; }
       if(!filters.actuator.includes(row[headerindex.Actuator]) && filters.actuator.length != 0){ continue; }
+      if(!filters.flange.includes(row[headerindex.Flange]) && filters.flange.length != 0){ continue; }
       if(!newdata.includes(data[i]) && data[i] != '' && data[i] != undefined){
         newdata.push(data[i]); 
       }
@@ -144,7 +148,6 @@ const Configtable: React.FC = () => {
         actuator: [],
         flange: []
     }
-    console.log(headerindex); 
     for(let i=0;i<newdata.length;i++){
       let row = newdata[i].split(",");
       if(!newfilters.size.includes(row[headerindex.Size])){ newfilters.size.push(row[headerindex.Size])}
@@ -152,6 +155,7 @@ const Configtable: React.FC = () => {
       if(!newfilters.bonnet.includes(row[headerindex.Bonnet])){ newfilters.bonnet.push(row[headerindex.Bonnet])}
       if(!newfilters.yokeboss.includes(row[headerindex.Yokeboss])){ newfilters.yokeboss.push(row[headerindex.Yokeboss])}
       if(!newfilters.actuator.includes(row[headerindex.Actuator])){ newfilters.actuator.push(row[headerindex.Actuator])}
+      if(!newfilters.flange.includes(row[headerindex.Flange])){ newfilters.flange.push(row[headerindex.Flange])}
     }
     setSelectfilter(newfilters);
     setData(newdata);
@@ -203,9 +207,6 @@ const Configtable: React.FC = () => {
         if(!newpressurelist.includes(row[headerindex.Pressure])){
           newpressurelist.push(row[headerindex.Pressure]);
         }
-        if(!newflangelist.includes(row[headerindex.Flange])){
-          newflangelist.push(row[headerindex.Flange]);
-        }
         if(!newbonnetlist.includes(row[headerindex.Bonnet])  ){
           newbonnetlist.push(row[headerindex.Bonnet]);
         }
@@ -214,7 +215,11 @@ const Configtable: React.FC = () => {
         }
         if(!newactuatorlist.includes(row[headerindex.Actuator]) ){ 
           newactuatorlist.push(row[headerindex.Actuator]);
-        }  
+        } 
+        // console.log(row[headerindex.Flange],headerindex.Flange)
+        if(!newflangelist.includes(row[headerindex.Flange])){
+          newflangelist.push(row[headerindex.Flange]);
+        }
       }
       setBonnetlist(newbonnetlist);
       setActuatorlist(newactuatorlist);
@@ -267,7 +272,10 @@ const Configtable: React.FC = () => {
       case "actuator":
         value.actuator= [filtervalue];
         break;
+      case "flange":
+        value.flange = [filtervalue]
     }
+    console.log(value);
     setFilters(value);
     return;
   }
@@ -350,10 +358,9 @@ const Configtable: React.FC = () => {
         { gx_group }
         { easy_group }
         <div className="relative z-0 w-full mb-1 group p-0">
-        <button id="confirmbutton" className='filter_select text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800' onClick={async(e)=>{
+        <button disabled={confirmStatus} id="confirmbutton" className='filter_select text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800' onClick={async(e)=>{
             e.preventDefault(); 
-            let targ = (e.target as HTMLButtonElement)
-            targ.setAttribute("disabled","true");
+            setConfirmstatus(true);
             try{
               if(data.length == 2){
                 // alert(data.length + "\r\n" + JSON.stringify(data[1]));
@@ -386,7 +393,7 @@ const Configtable: React.FC = () => {
               }
             }catch(ex){}
             setConfirmlabel(labels.confirm);
-            targ.setAttribute("disabled","false");
+            setConfirmstatus(false);
           }}>{confirmlabel}</button>
          <button className='filter_select text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'   onClick={async(e)=>{
             e.preventDefault();
