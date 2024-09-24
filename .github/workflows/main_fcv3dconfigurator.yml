@@ -11,14 +11,11 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
-
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Increase file descriptor limit
         run: ulimit -n 4096
-
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
