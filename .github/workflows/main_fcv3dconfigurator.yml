@@ -41,6 +41,11 @@ jobs:
           mv ./build/static ./build/standalone/build
           mv ./public ./build/standalone
 
+      - name: Set up environment variables
+        run: |
+          echo "AUTODESK_CLIENT_ID=${{ secrets.AUTODESK_CLIENT_ID }}" >> ./build/standalone/.env
+          echo "AUTODESK_CLIENT_SECRET=${{ secrets.AUTODESK_CLIENT_SECRET }}" >> ./build/standalone/.env
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
