@@ -38,8 +38,6 @@ jobs:
         run: |
           npm ci
           NODE_OPTIONS="--max-old-space-size=4096" npm run build --if-present
-          mv ./build/static ./build/standalone/build
-          mv ./public ./build/standalone
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -48,6 +46,12 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3BC02B276ECC4A1193C8998D6331680E }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_148AB3FC4E544DD095F0A6DC084923E5 }}
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: ./build/standalone
+          
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         with:
