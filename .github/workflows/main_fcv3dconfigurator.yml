@@ -38,6 +38,8 @@ jobs:
         run: |
           npm ci
           NODE_OPTIONS="--max-old-space-size=4096" npm run build --if-present
+          mv ./build/static ./build/standalone/build
+          mv ./public ./build/standalone
 
       - name: Login to Azure
         uses: azure/login@v2
