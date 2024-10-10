@@ -2,8 +2,7 @@
 import fs, { ReadStream } from "fs"
 import { Readable } from 'stream';
 import { returndata_type} from '../types/responses'
-import { arrayBuffer } from "stream/consumers";
-import { Axios } from "../../node_modules/axios/index";
+
 interface signedUpload {
     bucketname : string,
     filetoupload : string
@@ -24,9 +23,8 @@ export const createToken = async () => {
     });
     data = qs.stringify({
         'grant_type': 'client_credentials',
-        'scope': 'data:write data:read data:create bucket:create bucket:read viewables:read' 
+        'scope': 'viewables:read' 
     });
-
     let config = {
         method: 'post',
         maxBodyLength: Infinity,
@@ -38,16 +36,16 @@ export const createToken = async () => {
         },
         data : data
     };
-
     let req = await axios.request(config);
-    // fs.writeFileSync('./src/services/token.txt',req.data.access_token);
-    return req.data.access_token;
-
+    let returndata = {
+        token: req.data.access_token,
+        edocs_url: process.env.EDOCS_URL
+    }
+    return returndata;
 };
 
 const uploadToken = async () => {
-    return fs.readFileSync('./src/services/token.txt').toString(); 
-    
+    return fs.readFileSync('./src/services/token.txt').toString();
     let data = qs.stringify({
     'grant_type': 'client_credentials',
     'scope': 'data:write data:read data:create bucket:create bucket:read viewables:read' 

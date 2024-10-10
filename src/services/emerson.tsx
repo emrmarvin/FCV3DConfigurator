@@ -16,7 +16,16 @@ export const getCache =  ()=>{
 export const searchFile = async (props : {filename : string})=>{{
     console.log('searching',props.filename)
     if(mode == "cache"){
-        let cache = JSON.parse(fs.readFileSync('./tempfiles/filename_list.json').toString());
+        let cache;
+        switch(process.env.EDOCS_ENV.toLocaleUpperCase()){
+            case "STG":
+                cache = JSON.parse(fs.readFileSync('./tempfiles/filename_list_stg.json').toString());
+                break;
+            default:
+                cache = JSON.parse(fs.readFileSync('./tempfiles/filename_list.json').toString());
+                break;
+        }
+        
         let data : any = {data:[]};
         if(cache[props.filename] != undefined){
             data = {data:[cache[props.filename]]}
@@ -39,7 +48,7 @@ export const searchFile = async (props : {filename : string})=>{{
     }
 }}
 export const downloadFile = async (props : {url : string,filename:string,filekey:string})=>{
-    let cached_filenames = getCache();
+    let cached_filenames = await getCache();
     let returndata : returndata_type ={msg:"",urn:"",location:"",objectKey:""};
     if(cached_filenames[props.filename] != undefined){
         returndata = {msg:"cached",urn:cached_filenames[props.filename].urn,location:cached_filenames[props.filename].location,objectKey:cached_filenames[props.filename].objectKey}
@@ -49,20 +58,16 @@ export const downloadFile = async (props : {url : string,filename:string,filekey
     if(mode == "cache"){
         return returndata;
     }
-    
     console.log('downloading...')
     let success : boolean = false;
         while(success === false){
             success = true;
         }
-    let file_req = await fetch("https://cof-dev.emerson.com/apps/cad_api/api/drawing3d/v1/get-drawing-item?url="+props.url,{
+    let file_req = await fetch(`${process.env.edocs_url}/apps/cad_api/api/drawing3d/v1/get-drawing-item?url=${props.url}`,{
         method:"POST"
     })
     let blob = await file_req.arrayBuffer();
     console.log("status",file_req.status);
-    
     returndata = await uploadFile({bucketname:"daniel_viewer_testing",filetoupload:props.filename,filestream:blob}) as returndata_type;
-    // let wr = await req.arrayBuffer();
-    // let buffed = Buffer.from(wr);
     return returndata;
 }

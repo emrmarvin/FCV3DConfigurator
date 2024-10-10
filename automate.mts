@@ -1,12 +1,13 @@
 
 async function main(){
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     const fs = await import("fs");
     let files = fs.readdirSync('./public');
     var filename_list = {}
     try{
-        filename_list = JSON.parse(fs.readFileSync('./tempfiles/filename_list.json').toString())
+        filename_list = JSON.parse(fs.readFileSync('./tempfiles/filename_list_stg.json').toString())
     }catch(ex){}
-    var issue_list = fs.readFileSync('./tempfiles/issue.txt').toString();
+    var issue_list = fs.readFileSync('./tempfiles/issue_stg.txt').toString();
 
     for(let i=0;i<files.length;i++){
         let file=files[i];
@@ -28,11 +29,11 @@ async function main(){
                     filename_list[csv[keyword]] = data.data[0];
                     write_count++;
                     if(write_count > 5){
-                        fs.writeFileSync('./tempfiles/filename_list.json',JSON.stringify(filename_list,undefined,4))
+                        fs.writeFileSync('./tempfiles/filename_list_stg.json',JSON.stringify(filename_list,undefined,4))
                         write_count = 0;
                     }
                 }else{
-                    fs.appendFileSync('./tempfiles/issue.txt',`${csv[keyword]},${data.data.length}\r\n`)
+                    fs.appendFileSync('./tempfiles/issue_stg.txt',`${csv[keyword]},${data.data.length}\r\n`)
                 }
             })
         }
@@ -41,7 +42,7 @@ async function main(){
 }
 async function searchFile(props){
     console.log('searching',props.filename)
-    let url = "https://cof-dev.emerson.com/apps/cad_api/api/drawing3d/v1/get-list";
+    let url = `https://cof-stg.emerson.com//apps/cad_api/api/drawing3d/v1/get-list`;
     let req = await fetch(url,{
         method: "POST",
         body : JSON.stringify({

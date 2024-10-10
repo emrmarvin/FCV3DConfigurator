@@ -21,54 +21,8 @@ const runtime = {
  */
 function initializeViewerRuntime(options) {
     if (!runtime.ready) {
-        const documentPath = './dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6ZGFuaWVsX3ZpZXdlcl90ZXN0aW5nL0Vhc3ktRV9OUFMlMjAxX0NMMTUwJTIwUkZfUGxhaW5fMzBpLnN0ZXA/';
         runtime.options = { ...options };
         runtime.ready = new Promise((resolve) => Autodesk.Viewing.Initializer(runtime.options, resolve));
-        // runtime.ready = new Promise((resolve)=>{
-        //     // console.log(runtime.options)
-        //     // var myViewerDiv = document.getElementById('viewer');
-        //     // console.log(myViewerDiv)
-        //     // var viewer = new Autodesk.Viewing.Private.GuiViewer3D(myViewerDiv);
-        //     // var options = {
-        //     //     'env' : 'Local',
-        //     //     'document' : documentPath + '/output/1/Easy-E_NPS 1_CL150 RF_Plain_30i.svf'
-        //     // };
-        //     // Autodesk.Viewing.Initializer(options, function() {
-        //     //     viewer.start(options.document, options);
-        //     // },resolve);
-
-        //     // var options = {
-        //     //     env: 'Local',
-        //     //     document: 'http://localhost:3000/dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6ZGFuaWVsX3ZpZXdlcl90ZXN0aW5nL0Vhc3ktRV9OUFMlMjAxX0NMMTUwJTIwUkZfUGxhaW5fMzBpLnN0ZXA/output/1/Easy-E_NPS 1_CL150 RF_Plain_30i.svf',
-        //     //     // document: 'http://localhost:3000/dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6ZGFuaWVsX3ZpZXdlcl90ZXN0aW5nL0Vhc3ktRV9OUFMlMjAxX0NMMTUwJTIwUkZfUGxhaW5fMzBpLnN0ZXA/output/1/Easy-E_NPS 1_CL150 RF_Plain_30i.svf',
-        //     //     getAccessToken: function(onGetAccessToken) {
-        //     //         // If your local files require authentication, handle it here
-        //     //         var accessToken = runtime.options.accessToken;
-        //     //         var expireTimeSeconds = 3600;
-        //     //         onGetAccessToken(accessToken, expireTimeSeconds);
-        //     //     }
-        //     // };
-        //     // const MODEL_URL = options.document;
-        //     // Autodesk.Viewing.Initializer({ env: 'Local' }, async function () {
-        //     //     const viewer = new Autodesk.Viewing.GuiViewer3D(document.getElementById('viewer'));
-        //     //     viewer.start(MODEL_URL);
-        //     // },resolve);
-        //  })
-        
-        
-        // runtime.ready = new Promise((resolve) => Autodesk.Viewing.Initializer(options, resolve(function() { 
-        //     const viewerDiv = document.getElementById('viewer');
-        //     const viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv);
-        //     viewer.start();
-            
-        //     Autodesk.Viewing.Document.load(documentPath, function(doc) {
-        //         const rootItem = doc.getRoot();
-        //         const geometryItems = Autodesk.Viewing.Document.getSubItemsWithProperties(rootItem, {'type':'geometry'}, true);
-        //         viewer.loadDocumentNode(doc, geometryItems[0]);
-        //     })
-        // })))
-            
-        
     } else {
         if (['accessToken', 'getAccessToken', 'env', 'api', 'language'].some(prop => options[prop] !== runtime.options[prop])) {
             return Promise.reject('Cannot initialize another viewer runtime with different settings.')
@@ -90,7 +44,8 @@ class Viewer extends React.Component {
     }
 
     componentDidMount() {
-        initializeViewerRuntime(this.props.runtime || {})
+        // document.getElementById("autodesk_external_script").addEventListener('load', () => {
+            initializeViewerRuntime(this.props.runtime || {})
             .then(_ => {
                 this.viewer = new Autodesk.Viewing.GuiViewer3D(this.container);
                 this.viewer.start();
@@ -99,6 +54,8 @@ class Viewer extends React.Component {
                 this.updateViewerState({});
             })
             .catch(err => console.error(err));
+        // })
+        
     }
 
     componentWillUnmount() {

@@ -1,9 +1,9 @@
 "use client"
 import React, { useEffect, useState,useMemo } from 'react';
-import { createToken,uploadFile } from '@/services/Autodesk';
-import { downloadFile, searchFile } from '@/services/emerson';
+import { createToken,uploadFile } from '../services/Autodesk';
+import { downloadFile, searchFile } from '../services/emerson';
 import Viewer from '../components/Viewer';
-import { returndata_type } from '@/types/responses';
+import { returndata_type } from '../types/responses';
 
 const Configtable: React.FC = () => {
   const labels = {
@@ -57,6 +57,7 @@ const Configtable: React.FC = () => {
   const [token,setToken] = useState("");
   const [confirmStatus,setConfirmstatus] = useState(false);
   const [product,setProduct] = useState("Easy-E");
+  const [edocs_url,setEdocs] = useState("");
 
   useEffect(()=>{
     clear();
@@ -66,21 +67,21 @@ const Configtable: React.FC = () => {
     promises.push(new Promise((resolve,reject)=>{
       fetch("/easy_e.csv").then(async function(res){
         let resdata = await res.text();
-        let resdatav = resdata.split("\r\n");
+        let resdatav = resdata.replaceAll("\r","").split("\n");
         resolve(resdatav);
       })
     }));
     promises.push(new Promise((resolve,reject)=>{
       fetch("/gx.csv").then(async function(res){
         let resdata = await res.text();
-        let resdatav = resdata.split("\r\n");
+        let resdatav = resdata.replaceAll("\r","").split("\n");
         resolve(resdatav);
       })
     }));
     promises.push(new Promise((resolve,reject)=>{
       fetch("/vball.csv").then(async function(res){
         let resdata = await res.text();
-        let resdatav = resdata.split("\r\n");
+        let resdatav = resdata.replaceAll("\r","").split("\n");
         resolve(resdatav);
       })
     }));
@@ -97,7 +98,8 @@ const Configtable: React.FC = () => {
       setData(rdata.easy_e);
     })
     createToken().then(async function(res : any){
-      setToken(res);
+      setToken(res.token);
+      setEdocs(res.edocs_url);
     })
     // setUrn("dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6ZGFuaWVsX3ZpZXdlcl90ZXN0aW5nX2VtZXJzb24vTlBTJTIwMV9DTDE1MCUyMFJUSl9QbGFpbl8zMGkuc3RlcA==")
   },[]);
@@ -160,13 +162,9 @@ const Configtable: React.FC = () => {
     setSelectfilter(newfilters);
     setData(newdata);
   },[filters]);
-
   useEffect(()=>{
     csvdatac();
   },[data])
-  useEffect(()=>{
-
-  })
   function csvdatac(){
     let newsizelist = [""];
     let newpressurelist = [""];
@@ -175,7 +173,6 @@ const Configtable: React.FC = () => {
     let newactuatorlist = [""];
     let newflangelist = [""];
     let newheaderindex = headerindex;
-    if(data == undefined){return}
     try{
       let header = data[0].split(",");
       header.map((head,i)=>{
@@ -216,7 +213,6 @@ const Configtable: React.FC = () => {
         if(!newactuatorlist.includes(row[headerindex.Actuator]) ){ 
           newactuatorlist.push(row[headerindex.Actuator]);
         } 
-        // console.log(row[headerindex.Flange],headerindex.Flange)
         if(!newflangelist.includes(row[headerindex.Flange])){
           newflangelist.push(row[headerindex.Flange]);
         }
@@ -275,7 +271,6 @@ const Configtable: React.FC = () => {
       case "flange":
         value.flange = [filtervalue]
     }
-    console.log(value);
     setFilters(value);
     return;
   }
@@ -285,9 +280,6 @@ const Configtable: React.FC = () => {
     var drawingsviewer = <Viewer runtime={{ accessToken: token }} urn={urn} />
   }
   function getOptions(list : string[],key:string,title:string,select_id:string){
-    // if(title == "Actuator"){
-    //   console.log(list,selectfilters)
-    // }
     return <div className="relative z-0 w-full mb-5 group">
     <label htmlFor="size" className="block ml-5 mb-1 text-sm font-medium text-gray-900 dark:text-white">{title}</label>
     <select defaultValue={""} className="filter_select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 inline p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id={select_id} name={select_id} onChange={filter}>
@@ -311,7 +303,7 @@ const Configtable: React.FC = () => {
   if(product == "Easy-E"){
   easy_group = <div id="Easy-group" className="grid md:grid-cols-1 md:gap-0 mt-1 p-0">
     {getOptions(sizelist,"size","Size","size")}
-    {getOptions(pressurelist,"pressure","Pressure Class / RF","pressure")}
+    {getOptions(pressurelist,"pressure","Pressure Class / Flange","pressure")}
     {getOptions(bonnetlist,"bonnet","Bonnet","bonnet")}
     {getOptions(yokebosslist,"yokeboss","Yokeboss","yokeboss")}
     {getOptions(actuatorlist,"actuator","Actuator","actuator")}
@@ -336,7 +328,6 @@ const Configtable: React.FC = () => {
       {getOptions(actuatorlist,"actuator","Actuator","actuator")}
     </div>
   }
-
   return (
     <div>
       <div className="grid md:grid-cols-5 md:gap-0 mt-5 p-0 h-100">
@@ -363,8 +354,6 @@ const Configtable: React.FC = () => {
             setConfirmstatus(true);
             try{
               if(data.length == 2){
-                // alert(data.length + "\r\n" + JSON.stringify(data[1]));
-                // return;
                 setConfirmlabel(loadingsvg);
                 await new Promise(resolve => setTimeout(resolve, 1500));
                 let filename = data[1].split(",")[headerindex.Key]
@@ -374,19 +363,22 @@ const Configtable: React.FC = () => {
                     downloadFile({url : url,filename:res.data[0].dDocTitle+ "." + res.data[0].dExtension,filekey:filename}).then(function(file : returndata_type){
                       if(file.msg == "cached"){
                         setUrn(file.urn)
-                        file.location = `https://cof-dev.emerson.com/apps/cad_api/api/drawing3d/v1/get-drawing-item?url=${res.data[0].url}`;
+                        console.log(res,data)
+                        file.location = `${edocs_url}/apps/cad_api/api/drawing3d/v1/get-drawing-item?url=${res.data[0].url}`;
                         setFiledata(file);
                       }else{
-                        alert("Drawing is only available for download")
-                        let data : returndata_type = {location : `https://cof-dev.emerson.com/apps/cad_api/api/drawing3d/v1/get-drawing-item?url=${res.data[0].url}`,msg:"No cache",urn:"",objectKey:""}
+                        alert("Drawing is only available for download");
+                        let data : returndata_type = {location : `${edocs_url}/apps/cad_api/api/drawing3d/v1/get-drawing-item?url=${res.data[0].url}`,msg:"No cache",urn:"",objectKey:""}
                         setFiledata(data);
                       }
                     })
+                  }else if(res.data.length == 0){
+                    alert("File not available");
                   }else{
-                    alert("Something went wrong")
+                    console.log(res,data)
+                    alert("Something went wrong");
                   }
                 })
-                
               }else{
                 console.log(data);
                 alert("Filter please")
@@ -410,7 +402,6 @@ const Configtable: React.FC = () => {
               a.target = "_blank"
               a.download = data[0].split(",")[5];
               a.click();
-              
               document.body.removeChild(a);
               setDownloadlabel(labels.download);
             }}>{downloadlabel}
@@ -420,7 +411,19 @@ const Configtable: React.FC = () => {
         {drawingsviewer}
         </div>
       </div>
-    
+      <button className={filedata?.location? 'filter_select text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800' : 'invisible' } onClick={async(e)=>{
+              e.preventDefault();
+              setDownloadlabel(loadingsvg);
+              const a = document.createElement("a");
+              document.body.appendChild(a);
+              a.href = filedata?.location as string;
+              a.target = "_blank"
+              a.download = data[0].split(",")[5];
+              a.click();
+              document.body.removeChild(a);
+              setDownloadlabel(labels.download);
+            }}>{downloadlabel}
+          </button>
     </div>
   );
 }
