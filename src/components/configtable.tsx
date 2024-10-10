@@ -411,19 +411,6 @@ const Configtable: React.FC = () => {
         {drawingsviewer}
         </div>
       </div>
-      <button className={filedata?.location? 'filter_select text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800' : 'invisible' } onClick={async(e)=>{
-              e.preventDefault();
-              setDownloadlabel(loadingsvg);
-              const a = document.createElement("a");
-              document.body.appendChild(a);
-              a.href = filedata?.location as string;
-              a.target = "_blank"
-              a.download = data[0].split(",")[5];
-              a.click();
-              document.body.removeChild(a);
-              setDownloadlabel(labels.download);
-            }}>{downloadlabel}
-          </button>
     </div>
   );
 }
