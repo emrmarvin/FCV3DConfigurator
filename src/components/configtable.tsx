@@ -58,6 +58,7 @@ const Configtable: React.FC = () => {
   const [confirmStatus,setConfirmstatus] = useState(false);
   const [product,setProduct] = useState("Easy-E");
   const [edocs_url,setEdocs] = useState("");
+  const [acc_url,setAcc] = useState("");
 
   useEffect(()=>{
     clear();
@@ -100,8 +101,8 @@ const Configtable: React.FC = () => {
     createToken().then(async function(res : any){
       setToken(res.token);
       setEdocs(res.edocs_url);
+      setAcc(res.acc_url);
     })
-    // setUrn("dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6ZGFuaWVsX3ZpZXdlcl90ZXN0aW5nX2VtZXJzb24vTlBTJTIwMV9DTDE1MCUyMFJUSl9QbGFpbl8zMGkuc3RlcA==")
   },[]);
   useEffect(()=>{
     if(data.length == 0){return}
@@ -275,9 +276,11 @@ const Configtable: React.FC = () => {
     return;
   }
   if(token == ""){
-    var drawingsviewer =  <div></div>
+    var drawingsviewer =  <div>{loadingsvg}</div>
   }else{
-    var drawingsviewer = <Viewer runtime={{ accessToken: token }} urn={urn} />
+    // var drawingsviewer = <Viewer runtime={{ accessToken: token }} urn={urn} />
+    let url = "https://productviewer-stage.emerson.com/?system=fcv&payload=%7B%22document_sets%22%3A%5B%7B%22model_code%22%3A%222700R12ABAEZZZ%2CF400S435E2BAEZZZZMC_English%22%2C%22label%22%3A%22test%22%2C%22units%22%3A%22English%22%2C%22formats%22%3A%7B%223d%22%3A%5B%22dxf%22%2C%22igs%22%2C%22stp%22%5D%2C%222d%22%3A%5B%22dxf%22%2C%22pdf%22%5D%7D%7D%5D%7D"
+    var drawingsviewer = <iframe className="w-11/12 h-[90vh] border-4" src={urn} />
   }
   function getOptions(list : string[],key:string,title:string,select_id:string){
     return <div className="relative z-0 w-full mb-5 group">
@@ -357,12 +360,36 @@ const Configtable: React.FC = () => {
                 setConfirmlabel(loadingsvg);
                 await new Promise(resolve => setTimeout(resolve, 1500));
                 let filename = data[1].split(",")[headerindex.Key]
+                let payload = {
+                  "document_sets": [{
+                      "model_codes": [{
+                          "model_code": filename,
+                          "label": "Viewer",
+                          "units": "English",
+                          "formats": {
+                            "3d": [
+                              "dxf",
+                              "igs",
+                              "stp"
+                            ],
+                            "2d": [
+                              "dxf",
+                              "pdf"
+                            ]
+                          }}]
+                    }]
+                }
+                let encoded=encodeURIComponent(JSON.stringify(payload));
+                setConfirmlabel(labels.confirm);
+                setConfirmstatus(false);
+                setUrn(`${acc_url}/?system=fcv&payload=${encoded}`);
+                return;
                 await searchFile({filename : filename}).then(function(res : {data : [{url:string,dDocTitle: string,dExtension:string}]}){
                   if(res.data.length == 1){
                     let url = res.data[0].url
                     downloadFile({url : url,filename:res.data[0].dDocTitle+ "." + res.data[0].dExtension,filekey:filename}).then(function(file : returndata_type){
                       if(file.msg == "cached"){
-                        setUrn(file.urn)
+                        // setUrn(file.urn)
                         console.log(res,data)
                         file.location = `${edocs_url}/apps/cad_api/api/drawing3d/v1/get-drawing-item?url=${res.data[0].url}`;
                         setFiledata(file);
@@ -407,7 +434,7 @@ const Configtable: React.FC = () => {
             }}>{downloadlabel}
           </button>
         </form>
-        <div className='col-span-4' style={{position:"relative",height: "85vh", width:"70vw",marginLeft:"auto",marginRight:"auto"}}>
+        <div className='col-span-4 w-full h-full'>
         {drawingsviewer}
         </div>
       </div>

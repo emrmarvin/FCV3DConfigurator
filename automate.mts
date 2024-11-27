@@ -1,4 +1,4 @@
-
+const fs = require('fs')
 async function main(){
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     const fs = await import("fs");
@@ -56,4 +56,12 @@ async function searchFile(props){
     let res = await req.json();
     return await res;
 }
-main();
+function createRequest(){
+    let req = JSON.parse(fs.readFileSync('./tempfiles/request.json').toString());
+    let encoded = encodeURIComponent(JSON.stringify(req))
+    let url = `https://productviewer-stage.emerson.com/?system=fcv&payload=${encoded}`;
+    console.log(url)
+    // console.log(encoded)
+}
+createRequest();
+// main();

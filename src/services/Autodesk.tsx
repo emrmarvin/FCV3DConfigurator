@@ -17,29 +17,30 @@ const test = {
 const bucket = "daniel_viewer_testing";
 export const createToken = async () => {
     // return fs.readFileSync('./src/services/token.txt').toString();
-    let data = qs.stringify({
-    'grant_type': 'client_credentials',
-    'scope': 'viewables:read' 
-    });
-    data = qs.stringify({
-        'grant_type': 'client_credentials',
-        'scope': 'viewables:read' 
-    });
-    let config = {
-        method: 'post',
-        maxBodyLength: Infinity,
-        url: 'https://developer.api.autodesk.com/authentication/v2/token',
-        headers: { 
-            'Content-Type': 'application/x-www-form-urlencoded', 
-            'Accept': 'application/json', 
-            'Authorization': `Basic ${btoa(`${test.client_id}:${test.client_secret}`)}`
-        },
-        data : data
-    };
-    let req = await axios.request(config);
+    // let data = qs.stringify({
+    // 'grant_type': 'client_credentials',
+    // 'scope': 'viewables:read' 
+    // });
+    // data = qs.stringify({
+    //     'grant_type': 'client_credentials',
+    //     'scope': 'viewables:read' 
+    // });
+    // let config = {
+    //     method: 'post',
+    //     maxBodyLength: Infinity,
+    //     url: 'https://developer.api.autodesk.com/authentication/v2/token',
+    //     headers: { 
+    //         'Content-Type': 'application/x-www-form-urlencoded', 
+    //         'Accept': 'application/json', 
+    //         'Authorization': `Basic ${btoa(`${test.client_id}:${test.client_secret}`)}`
+    //     },
+    //     data : data
+    // };
+    // let req = await axios.request(config);
     let returndata = {
-        token: req.data.access_token,
-        edocs_url: process.env.EDOCS_URL
+        token: "req.data.access_token",
+        edocs_url: process.env.EDOCS_URL,
+        acc_url: process.env.ACC_URL
     }
     return returndata;
 };
