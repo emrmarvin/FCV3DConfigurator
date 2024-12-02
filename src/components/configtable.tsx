@@ -279,7 +279,6 @@ const Configtable: React.FC = () => {
     var drawingsviewer =  <div>{loadingsvg}</div>
   }else{
     // var drawingsviewer = <Viewer runtime={{ accessToken: token }} urn={urn} />
-    let url = "https://productviewer-stage.emerson.com/?system=fcv&payload=%7B%22document_sets%22%3A%5B%7B%22model_code%22%3A%222700R12ABAEZZZ%2CF400S435E2BAEZZZZMC_English%22%2C%22label%22%3A%22test%22%2C%22units%22%3A%22English%22%2C%22formats%22%3A%7B%223d%22%3A%5B%22dxf%22%2C%22igs%22%2C%22stp%22%5D%2C%222d%22%3A%5B%22dxf%22%2C%22pdf%22%5D%7D%7D%5D%7D"
     var drawingsviewer = <iframe className="w-11/12 h-[90vh] border-4" src={urn} />
   }
   function getOptions(list : string[],key:string,title:string,select_id:string){
