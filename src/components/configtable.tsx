@@ -378,6 +378,7 @@ const Configtable: React.FC = () => {
                           }}]
                     }]
                 }
+                console.log(payload)
                 let encoded=encodeURIComponent(JSON.stringify(payload));
                 setConfirmlabel(labels.confirm);
                 setConfirmstatus(false);
