@@ -1,67 +1,102 @@
+const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs')
-async function main(){
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-    const fs = await import("fs");
-    let files = fs.readdirSync('./public');
-    var filename_list = {}
-    try{
-        filename_list = JSON.parse(fs.readFileSync('./tempfiles/filename_list_stg.json').toString())
-    }catch(ex){}
-    var issue_list = fs.readFileSync('./tempfiles/issue_stg.txt').toString();
-
-    for(let i=0;i<files.length;i++){
-        let file=files[i];
-        if(!file.includes('.csv')){continue}
-        let filedata = fs.readFileSync('./public/' + file).toString().split('\r\n');
-        let headers = filedata[0].split(',');
-        let keyword = headers.indexOf("Name");
-        let write_count = 0;
-        for(let j=1;j<filedata.length;j++){
-            let csv = filedata[j].split(',');
-            if(csv[keyword] == undefined){continue}
-            if(filename_list[csv[keyword]] != undefined){console.log('done',csv[keyword]);continue}
-            if(issue_list.includes(csv[keyword])){console.log('issue',csv[keyword]);continue}
-            
-            console.log('searching...',csv[keyword])
-            await searchFile({filename:csv[keyword]}).then(async(data)=>{
-                if(data.data.length == 1){
-                    console.log(data.data[0].url)
-                    filename_list[csv[keyword]] = data.data[0];
-                    write_count++;
-                    if(write_count > 5){
-                        fs.writeFileSync('./tempfiles/filename_list_stg.json',JSON.stringify(filename_list,undefined,4))
-                        write_count = 0;
-                    }
-                }else{
-                    fs.appendFileSync('./tempfiles/issue_stg.txt',`${csv[keyword]},${data.data.length}\r\n`)
-                }
-            })
+const dbFilePath = './tempfiles/database.db'
+function setupDatabase() {
+    // Open a database connection (or create the database file if it doesn't exist)
+    if (!fs.existsSync(dbFilePath)) {
+        fs.writeFileSync(dbFilePath, '');
+        console.log('Database file created: database.db');
+    } else {
+        console.log('Database file already exists.');
+    }
+    const db = new sqlite3.Database(dbFilePath, (err) => {
+        if (err) {
+            console.error('Error opening database:', err.message);
+        } else {
+            console.log('Connected to the SQLite database.');
         }
-        // continue;
+    });
+
+    const createModelsTable = `
+        CREATE TABLE IF NOT EXISTS Models (
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name VARCHAR(100) UNIQUE
+        );
+    `;
+
+    const createFieldsTable = `
+        CREATE TABLE IF NOT EXISTS Fields (
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Model_ID INTEGER NOT NULL,
+            Name VARCHAR(100) NOT NULL,
+            Value VARCHAR(100),
+            Drawing_Name VARCHAR(100),
+            FOREIGN KEY (Model_ID) REFERENCES Models(ID),
+            Unique(Model_ID,Name,Value,Drawing_Name)
+        );
+    `;
+
+    db.serialize(() => {
+        db.run(createModelsTable, (err) => {
+            if (err) {
+                console.error('Error creating Models table:', err.message);
+            } else {
+                console.log('Models table created (or already exists).');
+            }
+        });
+
+        db.run(createFieldsTable, (err) => {
+            if (err) {
+                console.error('Error creating Fields table:', err.message);
+            } else {
+                console.log('Fields table created (or already exists).');
+            }
+        });
+        let model_list = ["Easy-E","GX","V-Ball"]
+        const stmt = db.prepare("INSERT INTO Models(Name) VALUES (?)");
+        for (let i = 0; i < model_list.length; i++) {
+            try{
+                stmt.run(model_list[i])
+            }catch(ex){
+                console.log(model_list[i],"exists")
+            }
+        }
+        stmt.finalize();
+    });
+
+    db.close((err) => {
+        if (err) {
+            console.error('Error closing the database:', err.message);
+        } else {
+            console.log('Database connection closed.');
+        }
+    });
+}
+
+function populate(){
+    const db = new sqlite3.Database(dbFilePath, (err) => {
+        if (err) {
+            console.error('Error opening database:', err.message);
+        } else {
+            console.log('Connected to the SQLite database.');
+        }
+    });
+    let list = fs.readFileSync('./public/easy_e.csv').toString().split('\r\n');
+    let headers = list[0].split(',');
+    for(let i=1;i<list.length;i++){
+        let columns = list[i].split(',')
+        if(columns.length != 6){
+            console.log("cont")
+            continue;
+        }
+        let stmt = db.prepare("INSERT INTO Fields(Model_ID,Name,Value,Drawing_Name) VALUES (?,?,?,?)");
+        for(let x=0;x<headers.length - 1;x++){
+            if(headers[x] == 'Name'){continue;}
+            stmt.run(1,headers[x],columns[x],columns[columns.length - 1]);
+        }
+        stmt.finalize();
     }
 }
-async function searchFile(props){
-    console.log('searching',props.filename)
-    let url = `https://cof-stg.emerson.com//apps/cad_api/api/drawing3d/v1/get-list`;
-    let req = await fetch(url,{
-        method: "POST",
-        body : JSON.stringify({
-            "criteria":[{
-                "fieldname": "dDocTitle",
-                "matchMode": "contains",
-                "value": props.filename
-            }]
-        })
-    })
-    let res = await req.json();
-    return await res;
-}
-function createRequest(){
-    let req = JSON.parse(fs.readFileSync('./tempfiles/request.json').toString());
-    let encoded = encodeURIComponent(JSON.stringify(req))
-    let url = `https://productviewer-stage.emerson.com/?system=fcv&payload=${encoded}`;
-    console.log(url)
-    // console.log(encoded)
-}
-createRequest();
-// main();
+
+// setupDatabase();
+populate();

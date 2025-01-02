@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState,useMemo } from 'react';
-import { createToken,uploadFile } from '../services/Autodesk';
-import { downloadFile, searchFile } from '../services/emerson';
+import { createToken,retrieveFields } from '../services/Autodesk';
+import {  searchFile } from '../services/emerson';
 import Viewer from '../components/Viewer';
 import { returndata_type } from '../types/responses';
 
@@ -103,6 +103,25 @@ const Configtable: React.FC = () => {
       setEdocs(res.edocs_url);
       setAcc(res.acc_url);
     })
+    let sql_data = {}
+    let drawing_list = {}
+    retrieveFields().then(function(res:[{model_name:string}]){
+      for(let i=0;i<res.length;i++){
+        let row  = res[i];
+        if(sql_data[row.model_name] == undefined){
+          sql_data[row.model_name] = [row['field_name']]
+        }else if(!sql_data[row.model_name].includes(row['field_name'])){
+          sql_data[row.model_name].push(row['field_name'])
+        }
+        if(drawing_list[row['value']] == undefined){
+          drawing_list[row['value']] = [row]
+        }else{
+          drawing_list[row['value']].push(row)
+        }
+      }
+    })
+    console.log(sql_data)
+    console.log(drawing_list)
   },[]);
   useEffect(()=>{
     if(data.length == 0){return}
@@ -341,41 +360,65 @@ const Configtable: React.FC = () => {
                   let productvalue = (e.target as HTMLSelectElement).value;          
                   setProduct(productvalue)
               }}>
-              <option key="Easy-E" value="Easy-E">Easy-E</option>
-              <option key="GX" value="GX">GX</option>
-              <option key="V-Ball" value="V-Ball">V-Ball</option>
+              <option key="Easy-E" value="Easy-E">Fisher™ easy-e™ control valve</option>
+              <option key="GX" value="GX">Fisher™ GX control valve</option>
+              <option key="V-Ball" value="V-Ball">Fisher™ Vee-Ball™ control valve</option>
             </select>
           </div>
         </div>
         { vball_group }
         { gx_group }
         { easy_group }
+        <label className="block ml-5 mb-1  text-sm font-medium text-gray-900 dark:text-white">Measurement</label>
+        <ul className="ml-5 items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                <div className="flex items-center ps-3">
+                    <input defaultChecked id="measurement_english" type="radio" name="list-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+                    <label className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">English </label>
+                </div>
+            </li>
+            <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                <div className="flex items-center ps-3">
+                    <input id="measurement_metric" type="radio" name="list-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+                    <label className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Metric</label>
+                </div>
+            </li>
+        </ul>
         <div className="relative z-0 w-full mb-1 group p-0">
-        <button disabled={confirmStatus} id="confirmbutton" className='filter_select text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800' onClick={async(e)=>{
+        <button disabled={confirmStatus} id="confirmbutton" className='mt-3 filter_select text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800' onClick={async(e)=>{
             e.preventDefault(); 
             setConfirmstatus(true);
             try{
               if(data.length == 2){
                 setConfirmlabel(loadingsvg);
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                let measurement = (document.getElementById("measurement_metric") as HTMLSelectElement)["checked"];
+                if(measurement){
+                  measurement = "Metric";
+                }else{
+                  measurement = "English";
+                }
+                await new Promise(resolve => setTimeout(resolve, 500));
                 let filename = data[1].split(",")[headerindex.Key]
                 let payload = {
                   "document_sets": [{
-                      "model_codes": [{
-                          "model_code": filename,
-                          "label": "Viewer",
-                          "units": "English",
-                          "formats": {
-                            "3d": [
-                              "dxf",
-                              "igs",
-                              "stp"
-                            ],
-                            "2d": [
-                              "dxf",
-                              "pdf"
-                            ]
-                          }}]
+                      "model_codes": [
+                        {
+                            "model_code": filename,
+                            "label": "Viewer",
+                            "units": measurement,
+                            "formats": {
+                              "3d": [
+                                "dxf",
+                                "igs",
+                                "stp"
+                              ],
+                              "2d": [
+                                "dxf",
+                                "pdf"
+                              ]
+                            }
+                        }
+                      ]
                     }]
                 }
                 console.log(payload)
@@ -384,28 +427,6 @@ const Configtable: React.FC = () => {
                 setConfirmstatus(false);
                 setUrn(`${acc_url}/?system=fcv&payload=${encoded}`);
                 return;
-                await searchFile({filename : filename}).then(function(res : {data : [{url:string,dDocTitle: string,dExtension:string}]}){
-                  if(res.data.length == 1){
-                    let url = res.data[0].url
-                    downloadFile({url : url,filename:res.data[0].dDocTitle+ "." + res.data[0].dExtension,filekey:filename}).then(function(file : returndata_type){
-                      if(file.msg == "cached"){
-                        // setUrn(file.urn)
-                        console.log(res,data)
-                        file.location = `${edocs_url}/apps/cad_api/api/drawing3d/v1/get-drawing-item?url=${res.data[0].url}`;
-                        setFiledata(file);
-                      }else{
-                        alert("Drawing is only available for download");
-                        let data : returndata_type = {location : `${edocs_url}/apps/cad_api/api/drawing3d/v1/get-drawing-item?url=${res.data[0].url}`,msg:"No cache",urn:"",objectKey:""}
-                        setFiledata(data);
-                      }
-                    })
-                  }else if(res.data.length == 0){
-                    alert("File not available");
-                  }else{
-                    console.log(res,data)
-                    alert("Something went wrong");
-                  }
-                })
               }else{
                 console.log(data);
                 alert("Filter please")

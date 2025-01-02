@@ -1,6 +1,5 @@
 "use server"
 import fs from "fs";
-import { uploadFile } from "./Autodesk";
 import { returndata_type } from '../types/responses'
 
 const mode = "cache";
@@ -47,27 +46,3 @@ export const searchFile = async (props : {filename : string})=>{{
         return await res;
     }
 }}
-export const downloadFile = async (props : {url : string,filename:string,filekey:string})=>{
-    let cached_filenames = await getCache();
-    let returndata : returndata_type ={msg:"",urn:"",location:"",objectKey:""};
-    if(cached_filenames[props.filename] != undefined){
-        returndata = {msg:"cached",urn:cached_filenames[props.filename].urn,location:cached_filenames[props.filename].location,objectKey:cached_filenames[props.filename].objectKey}
-        return returndata
-    }
-    returndata.msg = "no cache";
-    if(mode == "cache"){
-        return returndata;
-    }
-    console.log('downloading...')
-    let success : boolean = false;
-        while(success === false){
-            success = true;
-        }
-    let file_req = await fetch(`${process.env.edocs_url}/apps/cad_api/api/drawing3d/v1/get-drawing-item?url=${props.url}`,{
-        method:"POST"
-    })
-    let blob = await file_req.arrayBuffer();
-    console.log("status",file_req.status);
-    returndata = await uploadFile({bucketname:"daniel_viewer_testing",filetoupload:props.filename,filestream:blob}) as returndata_type;
-    return returndata;
-}
